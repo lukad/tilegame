@@ -47,7 +47,7 @@ class TileMap(object):
 	def _parse(self):
 		self._read_input()
 		self._tilesets = []
-		self._layers = []
+		self.tile_layers = []
 		try:
 			self.tile_width = self._data["tilewidth"]
 			self.tile_height = self._data["tileheight"]
@@ -57,24 +57,33 @@ class TileMap(object):
 					self.tile_width,
 					self.tile_height))
 			for layer in self._data["layers"]:
-				self._layers.append(Layer(
-					layer["name"],
-					layer["data"],
-					layer["width"],
-					layer["height"]))
+				if layer["type"] == "tilelayer":
+					self.tile_layers.append(Layer(
+						layer["name"],
+						layer["data"],
+						layer["width"],
+						layer["height"]))
 		except KeyError as e:
 			print("Failed to parse tile map %s" % self.filename)
 			raise e
 
 	def draw(self, screen, x, y):
 		width, height = screen.get_size()
-		for layer in self._layers:
-			for tile_y in range(0, height / self.tile_height):
-				for tile_x in range(0, width / self.tile_width):
-					id_index = tile_x + tile_y * layer.width
-					if id_index < 0 or id_index > len(layer.data) - 1:
-						continue
-					id = layer.data[id_index]
+		for layer in self.tile_layers:
+			for tile_y in range(0 - y / self.tile_height - 1, height / self.tile_height - y / self.tile_height):
+				for tile_x in range(0 - x / self.tile_width - 1, width / self.tile_width - x / self.tile_width):
+					id = 0
+					if tile_x < 0 or tile_x > layer.width or tile_y < 0 or tile_y > layer.height-1:
+						id = 52
+					else:
+						id_index = tile_x + tile_y * layer.width
+						if id_index < 0 or id_index > len(layer.data) - 1:
+							print(tile_x, tile_y)
+							continue
+						id = layer.data[id_index]
+						if id == 0:
+							if layer.name == "bg":
+								id = 52
 					tile = self._tilesets[0].tiles[id - 1]
 					rect = (tile_x * self.tile_width + x,
 						tile_y * self.tile_height + y,

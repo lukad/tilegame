@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 import pygame
 import pygame.locals
 
@@ -32,18 +31,23 @@ def main():
 				running = False
 
 		pressed = pygame.key.get_pressed()
+		move_speed = 2
+		if pressed[pygame.K_LSHIFT]:
+			move_speed *= 2
 		if pressed[pygame.K_LEFT]:
-			x += 2
+			x += move_speed
 		if pressed[pygame.K_RIGHT]:
-			x -= 2
+			x -= move_speed
 		if pressed[pygame.K_UP]:
-			y += 2
+			y += move_speed
 		if pressed[pygame.K_DOWN]:
-			y -= 2
+			y -= move_speed
 
-		backbuffer.fill((0, 150, 255))
-		tilemap.draw(backbuffer, x, y)
-		screen.blit(pygame.transform.scale(backbuffer, (SCALED_WIDTH, SCALED_HEIGHT)), RECT)
+		# backbuffer.fill((0, 150, 255))
+		screen.fill((0, 150, 255))
+		# tilemap.draw(backbuffer, x, y)
+		tilemap.draw(screen, x, y)
+		# screen.blit(pygame.transform.scale(backbuffer, (SCALED_WIDTH, SCALED_HEIGHT)), RECT)
 		pygame.display.update()
 
 if __name__ == "__main__":
